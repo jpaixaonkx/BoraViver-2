@@ -163,6 +163,30 @@
                         <input type="password" class="form-control" id="password" placeholder="Sua senha" required autocomplete="current-password">
                     </div>
                 </div>
+                    <div class="mb-3 d-flex justify-content-center">
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="adminToggle" onchange="toggleAdminMode()">
+        <label class="form-check-label text-light" for="adminToggle" id="userLabel">Login de Cliente</label>
+    </div>
+</div>
+
+<script>
+function toggleAdminMode() {
+    const toggle = document.getElementById('adminToggle');
+    const label = document.getElementById('userLabel');
+    const form = document.getElementById('loginForm'); // Certifique-se de dar ID ao seu form
+    
+    if (toggle.checked) {
+        label.textContent = "Acesso Administrativo";
+        label.style.color = "var(--rosa-magenta)"; // Destaque sutil para admin
+        form.action = "/admin-auth"; // Altere para sua rota de admin
+    } else {
+        label.textContent = "Login de Cliente";
+        label.style.color = "var(--branco)";
+        form.action = "/client-auth"; // Altere para sua rota padrão
+    }
+}
+</script>
 
                 <button type="submit" class="btn btn-premium w-100 mb-2" id="btnEntrar">
                     <span id="btnText">Entrar</span>
@@ -180,16 +204,21 @@
             
         </div>
     </div>
-
+      
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="./assets/js/auth.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
+        // 1. Configuração única e inicialização global da constante 'supabase'
         const SUPABASE_URL = "https://grxvopbjovyymdzuuocb.supabase.co"; 
         const SUPABASE_ANON_KEY = "sb_publishable_7vRsWje32gB7StqxliSvvA_cn4CpMji";
 
-        // Inicialização global e única do cliente Supabase
+        // ESSA DEVE SER A ÚNICA VEZ QUE "const supabase" APARECE NO ARQUIVO
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // Mapeamento dos elementos do DOM
         const loginForm = document.getElementById('loginForm');
         const loginAlert = document.getElementById('loginAlert');
         const alertMessage = document.getElementById('alertMessage');
@@ -198,8 +227,9 @@
         const btnSpinner = document.getElementById('btnSpinner');
 
         loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); 
+            e.preventDefault(); // 🌟 Agora vai funcionar e impedir o refresh da página!
             
+            // Ativa os loaders visuais
             loginAlert.style.display = 'none';
             btnEntrar.disabled = true;
             btnText.textContent = 'Autenticando...';
@@ -209,7 +239,7 @@
             const password = document.getElementById('password').value;
 
             try {
-                // 1. Efetua a autenticação no Supabase Auth
+                // 2. Autenticação no Supabase Auth
                 const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password
@@ -219,7 +249,7 @@
 
                 const user = authData.user;
 
-                // 2. Coleta a role na tabela pública
+                // 3. Busca o nível de acesso na tabela pública
                 const { data: userData, error: userError } = await supabase
                     .from('users')
                     .select('role')
@@ -227,30 +257,27 @@
                     .maybeSingle(); 
 
                 if (userError) {
-                    console.error("Falha ao ler privilégios do RLS:", userError);
+                    console.error("Erro ao ler tabela public.users:", userError);
                     throw new Error("Erro ao carregar permissões do perfil.");
                 }
 
                 if (!userData) {
-                    throw new Error("Perfil de acesso não encontrado na tabela pública de usuários.");
+                    throw new Error("Perfil não encontrado na tabela pública. Verifique o banco de dados.");
                 }
 
                 console.log("Login efetuado com sucesso! Nível de acesso:", userData.role);
 
-                // 3. 🗺️ Rotas corrigidas de acordo com o escopo (Arquivos na raiz do Frontend)
+                // 4. Redirecionamento baseado na raiz do Frontend
                 if (userData.role === 'ADMIN') {
-                    // Entra na pasta admin para acessar o dashboard
                     window.location.href = './admin/dashboard.html';
                 } else if (userData.role === 'CLIENT') {
-                    // Entra na pasta cliente para acessar o painel
                     window.location.href = './cliente/painel.html';
                 } else {
-                    // Permanece ou recarrega a home na raiz
                     window.location.href = './index.html';
                 }
 
             } catch (error) {
-                console.error("Falha no fluxo do login:", error);
+                console.error("Falha no login:", error);
                 
                 let mensagemAmigavel = error.message;
                 if (error.message === "Invalid login credentials") {
@@ -260,6 +287,7 @@
                 alertMessage.textContent = mensagemAmigavel;
                 loginAlert.style.display = 'block';
                 
+                // Restaura o botão ao estado padrão
                 btnEntrar.disabled = false;
                 btnText.textContent = 'Entrar';
                 btnSpinner.classList.add('d-none');
