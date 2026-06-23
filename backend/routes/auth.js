@@ -5,21 +5,20 @@
 import express from 'express';
 const router = express.Router();
 
-// Importação desestruturada limpa
-import { verificarPerfilUsuario, processarWebhookSincronia } from '../controllers/authcontrollers.js';
+// Importação do objeto padrão (Garante compatibilidade máxima no ESM)
+// Altere para:
+import authController from '../controllers/authcontroller.js';
 
 const verificarSessaoJWT = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ 
-            success: false, 
-            message: 'Acesso negado. Token ausente ou malformado.' 
-        });
+        return res.status(401).json({ success: false, message: 'Acesso negado.' });
     }
     next();
 };
 
-router.post('/verify-role', verificarSessaoJWT, verificarPerfilUsuario);
-router.post('/webhook-sync', processarWebhookSincronia);
+// Chamada utilizando o ponto do objeto exportado
+router.post('/verify-role', verificarSessaoJWT, authController.verificarPerfilUsuario);
+router.post('/webhook-sync', authController.processarWebhookSincronia);
 
 export default router;

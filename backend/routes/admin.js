@@ -6,7 +6,8 @@ import express from 'express';
 const router = express.Router();
 
 // Importações com padrão ESM (lembrando do .js)
-import adminController from '../controllers/admincontrollers.js';
+// Altere para:
+import adminController from '../controllers/admincontroller.js';
 import exigirAdmin from '../middlewares/admin.js';
 
 // Aplica a barreira de segurança global do middleware

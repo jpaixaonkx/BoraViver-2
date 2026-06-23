@@ -34,4 +34,4 @@ const verificarPrivilegiosAdmin = (req, res, next) => {
     next();
 };
 
-module.exports = verificarPrivilegiosAdmin;
+export default verificarPrivilegiosAdmin;
