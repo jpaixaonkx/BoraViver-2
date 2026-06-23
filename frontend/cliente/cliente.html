@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Cliente | BORAVIVER VIAGENS</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --azul-neon: #00f0ff;
+            --azul-oceano: #0072ff;
+            --rosa-magenta: #ff007f;
+            --amarelo-dourado: #ffbd59;
+            --preto: #0b0c10;
+            --branco: #ffffff;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top right, #001f3f 0%, var(--preto) 100%);
+            color: var(--branco);
+            min-height: 100vh;
+        }
+
+        /* Sidebar Glassmorphism */
+        .client-nav {
+            background: rgba(11, 12, 16, 0.8);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: var(--azul-neon);
+            box-shadow: 0 10px 25px rgba(0, 240, 255, 0.1);
+        }
+
+        .nav-tabs-premium .nav-link {
+            color: var(--branco);
+            border: none;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs-premium .nav-link.active {
+            background: transparent;
+            color: var(--azul-neon);
+            border-bottom: 3px solid var(--azul-neon);
+        }
+
+        .btn-whatsapp {
+            background: #25d366;
+            color: var(--branco);
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-whatsapp:hover {
+            background: #20ba5a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+            color: var(--branco);
+        }
+
+        .price-text {
+            color: var(--amarelo-dourado);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .promo-banner {
+            background: linear-gradient(135deg, var(--rosa-magenta), var(--azul-oceano));
+            border-radius: 15px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR PREMIUM DO CLIENTE -->
+    <nav class="navbar navbar-expand-lg navbar-dark client-nav px-4 py-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="../assets/logo.png" alt="BORAVIVER VIAGENS" style="max-height: 45px;">
+            </a>
+            <div class="d-flex align-items-center ms-auto">
+                <span class="me-3 d-none d-md-inline" id="welcomeUser">Olá, Viajante!</span>
+                <button class="btn btn-sm btn-outline-danger" id="btnLogout"><i class="fas fa-sign-out-alt"></i> Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <!-- BANNER DE PROMOÇÕES INTERATIVO (REALTIME) -->
+        <div class="promo-banner mb-5 animate__animated animate__fadeIn">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <span class="badge bg-warning text-dark mb-2 fw-bold text-uppercase">Oferta Exclusiva em Tempo Real</span>
+                    <h2 class="fw-bold" id="promoTitle">Maldivas Premium 2026</h2>
+                    <p class="mb-0" id="promoDesc">Aproveite descontos dinâmicos gerenciados instantaneamente pela nossa agência.</p>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <h3 class="fw-bold text-warning" id="promoPrice">R$ 7.890</h3>
+                    <button class="btn btn-light fw-bold px-4" onclick="preencherSimulacao('Maldivas Resort', 7890)">Quero Aproveitar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABAS DE NAVEGAÇÃO DA AGÊNCIA -->
+        <ul class="nav nav-tabs nav-tabs-premium mb-4" id="travelTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="passagens-tab" data-bs-toggle="tab" data-bs-target="#passagens" type="button"><i class="fas fa-plane me-2"></i>Passagens</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="hospedagens-tab" data-bs-toggle="tab" data-bs-target="#hospedagens" type="button"><i class="fas fa-hotel me-2"></i>Hospedagens</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="pacotes-tab" data-bs-toggle="tab" data-bs-target="#pacotes" type="button"><i class="fas fa-cubes me-2"></i>Pacotes</button>
+            </li>
+        </ul>
+
+        <div class="row">
+            <!-- CONTEÚDO DAS ABAS -->
+            <div class="col-lg-8">
+                <div class="tab-content" id="travelTabsContent">
+                    
+                    <!-- ABA: PASSAGENS -->
+                    <div class="tab-pane fade show active" id="passagens" role="tabpanel">
+                        <div class="row g-3" id="listaPassagens">
+                            <!-- Cards serão inseridos via JS dinâmico do banco de dados -->
+                            <div class="col-md-6">
+                                <div class="glass-card">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <span class="badge bg-info mb-2">Voo Direto</span>
+                                            <h5 class="fw-bold">São Paulo ➔ Miami</h5>
+                                            <p class="small text-muted mb-0">Companhia: Latam Airlines</p>
+                                        </div>
+                                        <span class="price-text">R$ 2.450</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-neon w-100 mt-3" onclick="preencherSimulacao('Passagem Miami', 2450)">Selecionar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ABA: HOSPEDAGENS -->
+                    <div class="tab-pane fade" id="hospedagens" role="tabpanel">
+                        <div class="row g-3" id="listaHospedagens">
+                            <div class="col-md-6">
+                                <div class="glass-card">
+                                    <h5 class="fw-bold">Copacabana Palace Premium</h5>
+                                    <p class="small text-muted">Rio de Janeiro - Vista Mar</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="small text-warning"><i class="fas fa-star"></i> 5.0</span>
+                                        <span class="price-text">R$ 1.200 <span class="small text-muted" style="font-size: 0.7rem;">/diária</span></span>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-neon w-100 mt-3" onclick="preencherSimulacao('Hotel Copacabana Palace', 1200)">Selecionar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ABA: PACOTES -->
+                    <div class="tab-pane fade" id="pacotes" role="tabpanel">
+                        <div class="row g-3" id="listaPacotes">
+                            <div class="col-md-6">
+                                <div class="glass-card">
+                                    <h5 class="fw-bold">EuroTrip Cultural (Paris + Roma)</h5>
+                                    <p class="small text-muted">7 Dias • Passagem + Hotel Incluso</p>
+                                    <span class="price-text">R$ 6.900</span>
+                                    <button class="btn btn-sm btn-outline-neon w-100 mt-3" onclick="preencherSimulacao('Pacote EuroTrip', 6900)">Selecionar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CONTAINER LATERAL: SIMULAÇÃO DE COMPRA -->
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="glass-card animate__animated animate__fadeInRight">
+                    <h4 class="fw-bold mb-4 text-uppercase text-center" style="color: var(--azul-neon);">Resumo da Simulação</h4>
+                    
+                    <form id="simulationForm">
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Item Escolhido</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" id="simDestino" readonly value="Nenhum item selecionado">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Quantidade de Passageiros/Hóspedes</label>
+                            <input type="number" class="form-control bg-dark text-white border-secondary" id="simQuantidade" min="1" value="1">
+                        </div>
+
+                        <hr class="border-secondary my-4">
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Valor Base:</span>
+                            <span id="lblBase">R$ 0,00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Taxas de Embarque/Serviço:</span>
+                            <span id="lblTaxas">R$ 0,00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="fw-bold">TOTAL ESTIMADO:</span>
+                            <span class="fw-bold text-warning fs-4" id="lblTotal">R$ 0,00</span>
+                        </div>
+
+                        <!-- Botão Inteligente de Integração WhatsApp -->
+                        <button type="button" class="btn btn-whatsapp w-100 py-2.5 mt-2" id="btnSolicitarAtendimento">
+                            <i class="fab fa-whatsapp me-2 fa-lg"></i> Solicitar Atendimento
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Oficial Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Configurações do Supabase (Ajuste para produção conforme o arquivo .env)
+        const SUPABASE_URL = "https://seu-projeto.supabase.co";
+        const SUPABASE_ANON_KEY = "seu_anon_public_key_aqui...";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Estado Global da simulação atual
+        let valorUnitarioItem = 0;
+        let whatsappEmpresa = "5511999999999"; // Número padrão, atualizável via banco
+
+        // Elementos de cálculo
+        const simDestino = document.getElementById('simDestino');
+        const simQuantidade = document.getElementById('simQuantidade');
+        const lblBase = document.getElementById('lblBase');
+        const lblTaxas = document.getElementById('lblTaxas');
+        const lblTotal = document.getElementById('lblTotal');
+
+        // Preenche os dados selecionados nos cards na calculadora de simulação
+        function preencherSimulacao(nome, valor) {
+            simDestino.value = nome;
+            valorUnitarioItem = valor;
+            calcularResumo();
+        }
+
+        function calcularResumo() {
+            const qtd = parseInt(simQuantidade.value) || 1;
+            const subtotal = valorUnitarioItem * qtd;
+            const taxas = subtotal * 0.10; // Taxa de serviço simulada de 10%
+            const total = subtotal + taxas;
+
+            lblBase.textContent = `R$ ${subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            lblTaxas.textContent = `R$ ${taxas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            lblTotal.textContent = `R$ ${total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+        }
+
+        simQuantidade.addEventListener('input', calcularResumo);
+
+        // Integração Inteligente com o WhatsApp
+        document.getElementById('btnSolicitarAtendimento').addEventListener('click', () => {
+            if (valorUnitarioItem === 0) {
+                alert("Por favor, selecione uma viagem, passagem ou hotel antes de prosseguir.");
+                return;
+            }
+
+            const destino = simDestino.value;
+            const qtd = simQuantidade.value;
+            const totalText = lblTotal.textContent;
+
+            // Mensagem estruturada conforme regra geral exigida
+            const textoMensagem = `Olá, tenho interesse nesta viagem.\n\nDestino: ${destino}\nValor: ${totalText}\nPassageiros: ${qtd}\n\nGostaria de finalizar a compra.`;
+            
+            const urlWhatsapp = `https://api.whatsapp.com/send?phone=${whatsappEmpresa}&text=${encodeURIComponent(textoMensagem)}`;
+            window.open(urlWhatsapp, '_blank');
+        });
+
+        // Escuta em tempo real (Supabase Realtime) para mudanças nas configurações e promoções
+        supabase
+            .channel('public:promotions')
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'promotions' }, payload => {
+                if(payload.new && payload.new.status) {
+                    document.getElementById('promoTitle').textContent = payload.new.titulo;
+                    document.getElementById('promoDesc').textContent = payload.new.descricao;
+                    document.getElementById('promoPrice').textContent = `R$ ${parseFloat(payload.new.valor).toLocaleString('pt-BR')}`;
+                    valorUnitarioItem = payload.new.valor;
+                    simDestino.value = payload.new.destino;
+                    calcularResumo();
+                }
+            })
+            .subscribe();
+
+        // Logout
+        document.getElementById('btnLogout').addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            window.location.href = './login.html';
+        });
+    </script>
+</body>
+</html>

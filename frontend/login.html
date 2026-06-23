@@ -10,11 +10,8 @@
     <meta property="og:description" content="Acesse sua conta na plataforma premium de turismo.">
     <meta property="og:type" content="website">
     
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/dist/css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -94,7 +91,6 @@
             box-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
         }
 
-        /* Botão estilizado com gradiente premium */
         .btn-premium {
             background: linear-gradient(45deg, var(--rosa-magenta), var(--azul-oceano));
             border: none;
@@ -166,12 +162,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
-        // Carrega as configurações do arquivo .env injetadas ou configuradas diretamente.
-        // Substitua pelas suas chaves do Supabase fornecidas no .env
-        const SUPABASE_URL = "https://seu-projeto.supabase.co"; 
-        const SUPABASE_ANON_KEY = "seu_anon_public_key_aqui...";
+        const SUPABASE_URL = "https://phwmvivnrlgucomktgkw.supabase.co"; 
+        const SUPABASE_ANON_KEY = "sb_publishable_wPdVmvf5EzMGCXrjMt0eDQ_qF62zpgS";
 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // 🌟 CORREÇÃO FINAL: Variável iniciada estritamente uma única vez como const global
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const loginForm = document.getElementById('loginForm');
         const loginAlert = document.getElementById('loginAlert');
@@ -181,9 +176,9 @@
         const btnSpinner = document.getElementById('btnSpinner');
 
         loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Retém o comportamento nativo de refresh do form
             
-            // Ativa loaders visuais suaves
+            // Ativa os loaders e limpa avisos antigos
             loginAlert.style.display = 'none';
             btnEntrar.disabled = true;
             btnText.textContent = 'Autenticando...';
@@ -193,7 +188,7 @@
             const password = document.getElementById('password').value;
 
             try {
-                // 1. Autentica o usuário no Supabase Auth
+                // 1. Efetua a autenticação na camada segura do Supabase Auth
                 const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password
@@ -203,30 +198,45 @@
 
                 const user = authData.user;
 
-                // 2. Consulta o nível de acesso (role) na tabela customizada 'public.users'
+                // 2. Coleta o campo 'role' diretamente da tabela pública usando o ID único do usuário
                 const { data: userData, error: userError } = await supabase
                     .from('users')
                     .select('role')
                     .eq('id', user.id)
-                    .single();
+                    .maybeSingle(); // Previne estouros caso a sincronização de tabelas demore alguns milissegundos
 
-                if (userError) throw new Error("Erro ao carregar permissões do perfil.");
+                if (userError) {
+                    console.error("Falha ao ler privilégios do RLS:", userError);
+                    throw new Error("Erro ao carregar permissões do perfil.");
+                }
 
-                // 3. Validação do nível de acesso e redirecionamento direcionado
+                // Proteção para contas órfãs de dados no public.users
+                if (!userData) {
+                    throw new Error("Perfil de acesso não encontrado. Verifique se concluiu o cadastro corretamente.");
+                }
+
+                // 3. Divisória e roteamento estratégico de níveis de acesso
                 if (userData.role === 'ADMIN') {
                     window.location.href = './admin/dashboard.html';
                 } else if (userData.role === 'CLIENT') {
-                    window.location.href = './client.html';
+                    window.location.href = './painel.html';
                 } else {
                     window.location.href = './index.html';
                 }
 
             } catch (error) {
-                // Exibe erro animado na tela de forma amigável
-                alertMessage.textContent = error.message || "Credenciais inválidas. Verifique seus dados.";
+                console.error("Falha no fluxo do login:", error);
+                
+                // Conversão de feedbacks brutos do Supabase para mensagens comerciais elegantes
+                let mensagemAmigavel = error.message;
+                if (error.message === "Invalid login credentials") {
+                    mensagemAmigavel = "E-mail ou senha incorretos. Por favor, tente novamente.";
+                }
+
+                alertMessage.textContent = mensagemAmigavel;
                 loginAlert.style.display = 'block';
                 
-                // Reseta os estados do botão
+                // Restaura o botão ao estado padrão
                 btnEntrar.disabled = false;
                 btnText.textContent = 'Entrar';
                 btnSpinner.classList.add('d-none');
