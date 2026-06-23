@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | BORAVIVER VIAGENS</title>
+    
+    <meta name="description" content="Acesse o portal BORAVIVER VIAGENS e gerencie suas viagens ou seu painel administrativo.">
+    <meta property="og:title" content="Login | BORAVIVER VIAGENS">
+    <meta property="og:description" content="Acesse sua conta na plataforma premium de turismo.">
+    <meta property="og:type" content="website">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/dist/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --azul-neon: #00f0ff;
+            --azul-oceano: #0072ff;
+            --rosa-magenta: #ff007f;
+            --amarelo-dourado: #ffbd59;
+            --preto: #0b0c10;
+            --branco: #ffffff;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at center, var(--azul-oceano) 0%, var(--preto) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            color: var(--branco);
+        }
+
+        /* Efeito de Vidro (Glassmorphism) */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            width: 100%;
+            max-width: 450px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            box-shadow: 0 8px 32px 0 rgba(0, 240, 255, 0.2);
+        }
+
+        .brand-logo {
+            max-width: 180px;
+            display: block;
+            margin: 0 auto 1.5rem auto;
+            filter: drop-shadow(0px 4px 10px rgba(255, 0, 127, 0.5));
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--azul-neon);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group-text {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--azul-neon);
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--branco);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--rosa-magenta);
+            color: var(--branco);
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
+        }
+
+        /* Botão estilizado com gradiente premium */
+        .btn-premium {
+            background: linear-gradient(45deg, var(--rosa-magenta), var(--azul-oceano));
+            border: none;
+            color: var(--branco);
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-premium:hover {
+            background: linear-gradient(45deg, var(--azul-oceano), var(--rosa-magenta));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 240, 255, 0.4);
+        }
+
+        .alert-custom {
+            background: rgba(255, 0, 127, 0.2);
+            border: 1px solid var(--rosa-magenta);
+            color: var(--branco);
+            border-radius: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="glass-card animate__animated animate__fadeInUp">
+            
+            <img src="./assets/logo.png" alt="BORAVIVER VIAGENS" class="brand-logo img-fluid">
+            
+            <h3 class="text-center mb-4 font-weight-bold" style="color: var(--branco);">Bem-vindo</h3>
+            
+            <div id="loginAlert" class="alert alert-custom animate__animated animate__shakeX" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i> <span id="alertMessage">Erro ao fazer login.</span>
+            </div>
+
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-mail</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        <input type="email" class="form-control" id="email" placeholder="seu@email.com" required autocomplete="email">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label">Senha</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" class="form-control" id="password" placeholder="Sua senha" required autocomplete="current-password">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-premium w-100 mb-3" id="btnEntrar">
+                    <span id="btnText">Entrar</span>
+                    <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                </button>
+            </form>
+
+            <div class="text-center mt-3">
+                <p class="small text-muted mb-0">Não possui uma conta? <a href="./cadastro.html" style="color: var(--azul-neon); text-decoration: none; font-weight: 600;">Cadastre-se</a></p>
+            </div>
+            
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        // Carrega as configurações do arquivo .env injetadas ou configuradas diretamente.
+        // Substitua pelas suas chaves do Supabase fornecidas no .env
+        const SUPABASE_URL = "https://seu-projeto.supabase.co"; 
+        const SUPABASE_ANON_KEY = "seu_anon_public_key_aqui...";
+
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const loginForm = document.getElementById('loginForm');
+        const loginAlert = document.getElementById('loginAlert');
+        const alertMessage = document.getElementById('alertMessage');
+        const btnEntrar = document.getElementById('btnEntrar');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Ativa loaders visuais suaves
+            loginAlert.style.display = 'none';
+            btnEntrar.disabled = true;
+            btnText.textContent = 'Autenticando...';
+            btnSpinner.classList.remove('d-none');
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // 1. Autentica o usuário no Supabase Auth
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (authError) throw authError;
+
+                const user = authData.user;
+
+                // 2. Consulta o nível de acesso (role) na tabela customizada 'public.users'
+                const { data: userData, error: userError } = await supabase
+                    .from('users')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single();
+
+                if (userError) throw new Error("Erro ao carregar permissões do perfil.");
+
+                // 3. Validação do nível de acesso e redirecionamento direcionado
+                if (userData.role === 'ADMIN') {
+                    window.location.href = './admin/dashboard.html';
+                } else if (userData.role === 'CLIENT') {
+                    window.location.href = './client.html';
+                } else {
+                    window.location.href = './index.html';
+                }
+
+            } catch (error) {
+                // Exibe erro animado na tela de forma amigável
+                alertMessage.textContent = error.message || "Credenciais inválidas. Verifique seus dados.";
+                loginAlert.style.display = 'block';
+                
+                // Reseta os estados do botão
+                btnEntrar.disabled = false;
+                btnText.textContent = 'Entrar';
+                btnSpinner.classList.add('d-none');
+            }
+        });
+    </script>
+</body>
+</html>

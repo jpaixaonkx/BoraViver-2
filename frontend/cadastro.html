@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro | BORAVIVER VIAGENS</title>
+    
+    <meta name="description" content="Crie sua conta na BORAVIVER VIAGENS e comece a planejar suas viagens premium hoje mesmo.">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --azul-neon: #00f0ff;
+            --azul-oceano: #0072ff;
+            --rosa-magenta: #ff007f;
+            --amarelo-dourado: #ffbd59;
+            --preto: #0b0c10;
+            --branco: #ffffff;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at center, var(--azul-oceano) 0%, var(--preto) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+            color: var(--branco);
+            overflow-x: hidden;
+        }
+
+        /* Container Glassmorphism Expandido para Cadastro */
+        .glass-card-wide {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            width: 100%;
+            max-width: 750px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .glass-card-wide:hover {
+            box-shadow: 0 8px 32px 0 rgba(255, 0, 127, 0.15);
+        }
+
+        .brand-logo {
+            max-width: 140px;
+            display: block;
+            margin: 0 auto 1rem auto;
+            filter: drop-shadow(0px 4px 10px rgba(0, 240, 255, 0.4));
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--azul-neon);
+            margin-bottom: 0.4rem;
+        }
+
+        .input-group-text {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--azul-neon);
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--branco);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--rosa-magenta);
+            color: var(--branco);
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.4);
+        }
+
+        .btn-premium {
+            background: linear-gradient(45deg, var(--rosa-magenta), var(--azul-oceano));
+            border: none;
+            color: var(--branco);
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-premium:hover {
+            background: linear-gradient(45deg, var(--azul-oceano), var(--rosa-magenta));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 127, 0.4);
+        }
+
+        .alert-custom {
+            background: rgba(255, 0, 127, 0.2);
+            border: 1px solid var(--rosa-magenta);
+            color: var(--branco);
+            border-radius: 10px;
+            display: none;
+        }
+
+        .alert-success-custom {
+            background: rgba(0, 240, 255, 0.2);
+            border: 1px solid var(--azul-neon);
+            color: var(--branco);
+            border-radius: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="glass-card-wide animate__animated animate__fadeInUp">
+            
+            <img src="./assets/logo.png" alt="BORAVIVER VIAGENS" class="brand-logo img-fluid">
+            <h3 class="text-center mb-4 font-weight-bold">Crie Sua Conta Premium</h3>
+            
+            <div id="registerAlert" class="alert alert-custom animate__animated animate__shakeX" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i> <span id="alertMessage">Erro ao realizar cadastro.</span>
+            </div>
+            <div id="successAlert" class="alert alert-success-custom animate__animated animate__fadeIn" role="alert">
+                <i class="fas fa-check-circle me-2"></i> Cadastro realizado com sucesso! Redirecionando...
+            </div>
+
+            <form id="cadastroForm">
+                <div class="row g-3">
+                    
+                    <div class="col-md-6">
+                        <label for="nome" class="form-label">Nome</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" class="form-control" id="nome" placeholder="John" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="sobrenome" class="form-label">Sobrenome</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user-friends"></i></span>
+                            <input type="text" class="form-control" id="sobrenome" placeholder="Doe" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="cpf" class="form-label">CPF</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                            <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00" maxlength="14" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="dataNascimento" class="form-label">Data de Nascimento</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                            <input type="date" class="form-control" id="dataNascimento" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="telefone" class="form-label">Telefone</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                            <input type="tel" class="form-control" id="telefone" placeholder="(00) 0000-0000">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="whatsapp" class="form-label">WhatsApp</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fab fa-whatsapp"></i></span>
+                            <input type="tel" class="form-control" id="whatsapp" placeholder="(00) 90000-0000" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label for="email" class="form-label">E-mail Comercial</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input type="email" class="form-control" id="email" placeholder="seu@email.com" required autocomplete="email">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 mb-2">
+                        <label for="password" class="form-label">Senha de Acesso</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control" id="password" placeholder="Mínimo 6 caracteres" minlength="6" required autocomplete="new-password">
+                        </div>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn btn-premium w-100 mt-4" id="btnCadastrar">
+                    <span id="btnText">Finalizar Cadastro</span>
+                    <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                </button>
+            </form>
+
+            <div class="text-center mt-3">
+                <p class="small text-muted mb-0">Já possui uma conta ativa? <a href="./login.html" style="color: var(--azul-neon); text-decoration: none; font-weight: 600;">Faça Login</a></p>
+            </div>
+            
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        // Substitua pelas chaves de produção configuradas no seu .env
+        const SUPABASE_URL = "https://seu-projeto.supabase.co"; 
+        const SUPABASE_ANON_KEY = "seu_anon_public_key_aqui...";
+
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const cadastroForm = document.getElementById('cadastroForm');
+        const registerAlert = document.getElementById('registerAlert');
+        const successAlert = document.getElementById('successAlert');
+        const alertMessage = document.getElementById('alertMessage');
+        const btnCadastrar = document.getElementById('btnCadastrar');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+
+        // Máscara simples para CPF via JS nativo
+        document.getElementById('cpf').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, "");
+            value = value.replace(/(\d{3})(\d)/, "$1.$2");
+            value = value.replace(/(\d{3})(\d)/, "$1.$2");
+            value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            e.target.value = value;
+        });
+
+        cadastroForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            registerAlert.style.display = 'none';
+            successAlert.style.display = 'none';
+            btnCadastrar.disabled = true;
+            btnText.textContent = 'Processando...';
+            btnSpinner.classList.remove('d-none');
+
+            // Captura de valores informados
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const nome = document.getElementById('nome').value;
+            const sobrenome = document.getElementById('sobrenome').value;
+            const cpf = document.getElementById('cpf').value;
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            const telephone = document.getElementById('telefone').value;
+            const whatsapp = document.getElementById('whatsapp').value;
+
+            try {
+                // 1. Criar credenciais no módulo de autenticação do Supabase Auth
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: email,
+                    password: password
+                });
+
+                if (authError) throw authError;
+                if (!authData.user) throw new Error("Erro inesperado durante a criação do usuário.");
+
+                // 2. Criar o perfil estendido atrelado ao ID gerado na tabela public.users
+                const { error: profileError } = await supabase
+                    .from('users')
+                    .insert([
+                        {
+                            id: authData.user.id,
+                            nome: nome,
+                            sobrenome: sobrenome,
+                            email: email,
+                            cpf: cpf,
+                            data_nascimento: dataNascimento,
+                            telefone: telephone,
+                            whatsapp: whatsapp,
+                            role: 'CLIENT' -- 
+                        }
+                    ]);
+
+                if (profileError) throw profileError;
+
+                // 3. Sucesso! Mostra feedback visual elegante e joga para a área logada do cliente
+                successAlert.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = './client.html';
+                }, 2000);
+
+            } catch (error) {
+                alertMessage.textContent = error.message || "Verifique se os dados estão corretos ou se o e-mail já está cadastrado.";
+                registerAlert.style.display = 'block';
+                
+                btnCadastrar.disabled = false;
+                btnText.textContent = 'Finalizar Cadastro';
+                btnSpinner.classList.add('d-none');
+            }
+        });
+    </script>
+</body>
+</html>
