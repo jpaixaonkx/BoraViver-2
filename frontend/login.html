@@ -179,11 +179,11 @@ function toggleAdminMode() {
     if (toggle.checked) {
         label.textContent = "Acesso Administrativo";
         label.style.color = "var(--rosa-magenta)"; // Destaque sutil para admin
-        form.action = "/admin-auth"; // Altere para sua rota de admin
+        form.action = "../frontend/admin/dashboard.html"; // Altere para sua rota de admin
     } else {
         label.textContent = "Login de Cliente";
         label.style.color = "var(--branco)";
-        form.action = "/client-auth"; // Altere para sua rota padrão
+        form.action = "../frontend/cliente/cliente.html"; // Altere para sua rota padrão
     }
 }
 </script>
@@ -227,72 +227,86 @@ function toggleAdminMode() {
         const btnSpinner = document.getElementById('btnSpinner');
 
         loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // 🌟 Agora vai funcionar e impedir o refresh da página!
-            
-            // Ativa os loaders visuais
-            loginAlert.style.display = 'none';
-            btnEntrar.disabled = true;
-            btnText.textContent = 'Autenticando...';
-            btnSpinner.classList.remove('d-none');
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+    e.preventDefault();
 
-            try {
-                // 2. Autenticação no Supabase Auth
-                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
+    loginAlert.style.display = 'none';
 
-                if (authError) throw authError;
+    btnEntrar.disabled = true;
+    btnText.textContent = 'Autenticando...';
+    btnSpinner.classList.remove('d-none');
 
-                const user = authData.user;
+    try {
 
-                // 3. Busca o nível de acesso na tabela pública
-                const { data: userData, error: userError } = await supabase
-                    .from('users')
-                    .select('role')
-                    .eq('id', user.id)
-                    .maybeSingle(); 
+        const email =
+        document.getElementById('email').value;
 
-                if (userError) {
-                    console.error("Erro ao ler tabela public.users:", userError);
-                    throw new Error("Erro ao carregar permissões do perfil.");
-                }
+        const password =
+        document.getElementById('password').value;
 
-                if (!userData) {
-                    throw new Error("Perfil não encontrado na tabela pública. Verifique o banco de dados.");
-                }
+        const {
+            data: authData,
+            error: authError
+        } =
+        await supabase.auth.signInWithPassword({
 
-                console.log("Login efetuado com sucesso! Nível de acesso:", userData.role);
+            email,
+            password
 
-                // 4. Redirecionamento baseado na raiz do Frontend
-                if (userData.role === 'ADMIN') {
-                    window.location.href = './admin/dashboard.html';
-                } else if (userData.role === 'CLIENT') {
-                    window.location.href = './cliente/painel.html';
-                } else {
-                    window.location.href = './index.html';
-                }
-
-            } catch (error) {
-                console.error("Falha no login:", error);
-                
-                let mensagemAmigavel = error.message;
-                if (error.message === "Invalid login credentials") {
-                    mensagemAmigavel = "E-mail ou senha incorretos. Por favor, tente novamente.";
-                }
-
-                alertMessage.textContent = mensagemAmigavel;
-                loginAlert.style.display = 'block';
-                
-                // Restaura o botão ao estado padrão
-                btnEntrar.disabled = false;
-                btnText.textContent = 'Entrar';
-                btnSpinner.classList.add('d-none');
-            }
         });
+
+        if (authError) throw authError;
+
+        const user = authData.user;
+
+        const {
+            data: userData,
+            error: userError
+        } =
+        await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+        if (userError) throw userError;
+
+        console.log('Usuário:', user);
+        console.log('Perfil:', userData);
+
+        if (userData.role === 'ADMIN') {
+
+            window.location.replace(
+                '../admin/dashboard.html'
+            );
+
+        } else {
+
+            window.location.replace(
+                '../cliente/cliente.html'
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        alertMessage.textContent =
+        error.message;
+
+        loginAlert.style.display =
+        'block';
+
+        btnEntrar.disabled = false;
+
+        btnText.textContent = 'Entrar';
+
+        btnSpinner.classList.add('d-none');
+
+    }
+
+});
     </script>
 </body>
 </html>
