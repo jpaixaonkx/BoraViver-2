@@ -747,7 +747,7 @@
     </div>
     <button class="logout-btn" id="logoutBtn">
       <i class="fa-solid fa-arrow-right-from-bracket"></i>
-      Sair
+      <span  class="menu-text-label ms-3" href=".frontend/index.html">Sair</span>
     </button>
   </div>
 </header>
@@ -1207,41 +1207,73 @@ async function carregarContatos(){
 async function carregarPerfil(){
   const { data: { user } } = await sb.auth.getUser();
   if(!user){ location.href = '../index.html'; return; }
-  currentUser = user;
+  currentUser = user;async function carregarPerfil(){
 
-  const { data: prof } = await sb.from('perfis').select('*').eq('id', user.id).maybeSingle();
-  userProfile = prof || {};
+    const {
+        data:{user},
+        error
+    } = await sb.auth.getUser();
 
-  const nome = userProfile.nome || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuário';
-  const email = user.email || '';
-  const tel   = userProfile.telefone || '';
-  const avatarUrl = userProfile.avatar_url || null;
+    if(error || !user){
+        location.href="../index.html";
+        return;
+    }
 
-  // Topbar
-  document.getElementById('topNome').textContent = nome;
-  setAvatar('topAvatar', 'topAvatarInitial', avatarUrl, nome);
+    currentUser=user;
 
-  // Perfil page
-  document.getElementById('profileNome').textContent = nome;
-  document.getElementById('profileEmail').textContent = email;
-  document.getElementById('inputNome').value    = nome;
-  document.getElementById('inputEmail').value   = email;
-  document.getElementById('inputTelefone').value = tel;
-  setAvatar('avatarLg', 'avatarLgInitial', avatarUrl, nome);
-}
+    const {data:perfil}=await sb
+        .from("users")
+        .select("*")
+        .eq("id",user.id)
+        .single();
 
-function setAvatar(wrapId, initId, url, name){
-  const wrap = document.getElementById(wrapId);
-  const init = document.getElementById(initId);
-  if(url){
-    init.style.display = 'none';
-    let img = wrap.querySelector('img');
-    if(!img){ img = document.createElement('img'); wrap.appendChild(img); }
-    img.src = url; img.alt = name;
-  } else {
-    init.textContent = initials(name);
-  }
-}
+    let nome="Cliente";
+
+    if(perfil && perfil.nome){
+
+        nome=perfil.nome;
+
+    }else if(user.user_metadata?.nome){
+
+        nome=user.user_metadata.nome;
+
+    }else if(user.user_metadata?.full_name){
+
+        nome=user.user_metadata.full_name;
+
+    }else if(user.email){
+
+        nome=user.email.split("@")[0];
+
+    }
+
+    document.getElementById("topNome").textContent=`Olá, ${nome} 👋`;
+
+    document.getElementById("profileNome").textContent=nome;
+
+    document.getElementById("profileEmail").textContent=user.email;
+
+    document.getElementById("inputNome").value=nome;
+
+    document.getElementById("inputEmail").value=user.email;
+
+    document.getElementById("inputTelefone").value=perfil?.telefone || "";
+
+    setAvatar(
+        "topAvatar",
+        "topAvatarInitial",
+        perfil?.avatar_url || null,
+        nome
+    );
+
+    setAvatar(
+        "avatarLg",
+        "avatarLgInitial",
+        perfil?.avatar_url || null,
+        nome
+    );
+
+}}
 
 async function salvarPerfil(){
   if(!currentUser) return;
